@@ -26,5 +26,5 @@ func (r *RouteConfig) Setup() {
 	// user
 	user := api.Group("/users", r.AuthMiddleware.Auth())
 	user.Get("/:id", r.UserHandler.FindById)
-	user.Delete("/:id", r.UserHandler.Delete)
+	user.Delete("/", r.UserHandler.Delete)
 }

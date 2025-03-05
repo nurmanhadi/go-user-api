@@ -27,9 +27,8 @@ func (h *userHandler) FindById(c *fiber.Ctx) error {
 	return response.Success(c, 200, result)
 }
 func (h *userHandler) Delete(c *fiber.Ctx) error {
-	userId := c.Locals("id").(string)
-	id := c.Params("id")
-	if userId != id {
+	id, ok := c.Locals("id").(string)
+	if !ok {
 		return response.ErrorR(c, 401, "You are not authorized to access this resource")
 	}
 	err := h.userUsecase.Delete(id)
