@@ -42,7 +42,7 @@ Create a MySQL database with the name `go_user_api` (or any preferred name) and 
 Execute the migration script using any database migration tool. If using Golang Migrate, run:
 
 ```bash
-migrate up
+migrate up ./db/migrations/up.sql
 ```
 
 ### 5. Run the Application
@@ -58,7 +58,8 @@ go run cmd/web/main.go
 If you prefer running the application with Docker Compose, execute the following command:
 
 ```bash
-docker-compose up --build
+docker compose create
+docker compose start
 ```
 
 This will start the application along with the MySQL database container as defined in the `docker-compose.yml` file.
