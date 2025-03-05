@@ -1,0 +1,22 @@
+{
+    "app": {
+        "name": "go user api",
+        "version": "1.0.0"
+    },
+    "server": {
+        "host": "0.0.0.0",
+        "port": 3000,
+        "prefork": true
+    },
+    "mysql": {
+        "dsn": "root:root@tcp(127.0.0.1:3306)/go_user_api?charset=utf8mb4&parseTime=True&loc=Local",
+        "max_idle_conns": 10,
+        "max_open_conns": 100,
+        "conn_max_idletime": 5,
+        "conn_max_lifetime": 60
+    },
+    "jwt": {
+        "key": "oiqwueiowque82e91",
+        "exp": 24
+    }
+}
