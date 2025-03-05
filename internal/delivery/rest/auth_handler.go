@@ -11,6 +11,7 @@ import (
 type IAuthHandler interface {
 	Register(c *fiber.Ctx) error
 	Login(c *fiber.Ctx) error
+	ChangePassword(c *fiber.Ctx) error
 }
 type authHandler struct {
 	authUsecase usecase.IAuthUsecase
@@ -42,4 +43,20 @@ func (h *authHandler) Login(c *fiber.Ctx) error {
 		return response.Error(c, err)
 	}
 	return response.Success(c, 200, result)
+}
+func (h *authHandler) ChangePassword(c *fiber.Ctx) error {
+	id, ok := c.Locals("id").(string)
+	if !ok {
+		return response.ErrorR(c, 401, "You are not authorized to access this resource")
+	}
+	request := new(model.AuthChangePasswordRequest)
+	err := c.BodyParser(&request)
+	if err != nil {
+		return response.ErrorR(c, 400, "failed parse json")
+	}
+	err = h.authUsecase.ChangePassword(id, request)
+	if err != nil {
+		return response.Error(c, err)
+	}
+	return response.Success(c, 200, nil)
 }

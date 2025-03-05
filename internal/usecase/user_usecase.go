@@ -1,7 +1,7 @@
 package usecase
 
 import (
-	"go-user-api/internal/model"
+	"go-user-api/internal/entity"
 	"go-user-api/internal/repository"
 	"go-user-api/pkg/exception"
 
@@ -10,7 +10,7 @@ import (
 )
 
 type IUserUsecase interface {
-	FindById(id string) (*model.UserResponse, error)
+	FindById(id string) (*entity.User, error)
 	Delete(id string) error
 }
 type userUsecase struct {
@@ -26,7 +26,7 @@ func NewUserUsecase(userRepository repository.IUserRepository, validation *valid
 		log:            log,
 	}
 }
-func (u *userUsecase) FindById(id string) (*model.UserResponse, error) {
+func (u *userUsecase) FindById(id string) (*entity.User, error) {
 	user, err := u.userRepository.FindById(id)
 	if err != nil {
 		u.log.WithField("error", err).Warn("user not found")

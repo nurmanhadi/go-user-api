@@ -4,7 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"go-user-api/internal/entity"
-	"go-user-api/internal/model"
 	"go-user-api/internal/repository/source"
 
 	"github.com/sirupsen/logrus"
@@ -13,9 +12,10 @@ import (
 type IUserRepository interface {
 	Add(user *entity.User) error
 	Count(email string) (int, error)
-	FindById(id string) (*model.UserResponse, error)
+	FindById(id string) (*entity.User, error)
 	Delete(id string) error
 	FindByEmail(email string) (*entity.User, error)
+	UpdatePassword(id string, password string) error
 }
 type userRepository struct {
 	db  *sql.DB
@@ -59,15 +59,15 @@ func (r *userRepository) Count(email string) (int, error) {
 	}
 	return count, nil
 }
-func (r *userRepository) FindById(id string) (*model.UserResponse, error) {
-	user := new(model.UserResponse)
+func (r *userRepository) FindById(id string) (*entity.User, error) {
+	user := new(entity.User)
 	stmt, err := r.db.PrepareContext(r.ctx, source.USER_FIND_BY_ID)
 	if err != nil {
 		r.log.WithError(err).Error("failed prepare context user find by id")
 		return nil, err
 	}
 	defer stmt.Close()
-	err = stmt.QueryRowContext(r.ctx, &id).Scan(&user.Id, &user.Name, &user.Email, &user.CreatedAt, &user.UpdatedAt)
+	err = stmt.QueryRowContext(r.ctx, &id).Scan(&user.Id, &user.Name, &user.Email, &user.Password, &user.CreatedAt, &user.UpdatedAt)
 	if err != nil {
 		r.log.WithError(err).Error("failed query row context user find by id")
 		return nil, err
@@ -99,6 +99,20 @@ func (r *userRepository) Delete(id string) error {
 	_, err = stmt.ExecContext(r.ctx, &id)
 	if err != nil {
 		r.log.WithError(err).Error("failed exec context delete user")
+		return err
+	}
+	return nil
+}
+func (r *userRepository) UpdatePassword(id string, password string) error {
+	stmt, err := r.db.PrepareContext(r.ctx, source.USER_UPDATE_PASSWORD)
+	if err != nil {
+		r.log.WithError(err).Error("failed prepare context update password user")
+		return err
+	}
+	defer stmt.Close()
+	_, err = stmt.ExecContext(r.ctx, &password, &id)
+	if err != nil {
+		r.log.WithError(err).Error("failed exec context update password user")
 		return err
 	}
 	return nil

@@ -18,6 +18,7 @@ import (
 type IAuthUsecase interface {
 	Register(request *model.AuthRegisterRequest) error
 	Login(request *model.AuthLoginRequest) (*model.AuthResponseAccessToken, error)
+	ChangePassword(id string, request *model.AuthChangePasswordRequest) error
 }
 type authUsecase struct {
 	userRepository repository.IUserRepository
@@ -95,4 +96,27 @@ func (u *authUsecase) Login(request *model.AuthLoginRequest) (*model.AuthRespons
 		AccessToken: token,
 	}
 	return result, nil
+}
+func (u *authUsecase) ChangePassword(id string, request *model.AuthChangePasswordRequest) error {
+	err := u.validation.Struct(request)
+	if err != nil {
+		u.log.WithField("error", err).Warn("failed validation login request")
+		return err
+	}
+	user, err := u.userRepository.FindById(id)
+	if err != nil {
+		u.log.WithField("error", err).Warn("user not found")
+		return exception.UserNotFound
+	}
+	err = hash.ComparePassword(user.Password, request.OldPassword)
+	if err != nil {
+		u.log.WithField("error", err).Warn("email or password wrong")
+		return exception.PasswordWrong
+	}
+	err = u.userRepository.UpdatePassword(id, request.NewPassword)
+	if err != nil {
+		u.log.WithField("error", err).Warn("failed update new password to database")
+		return err
+	}
+	return nil
 }

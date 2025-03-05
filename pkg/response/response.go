@@ -40,6 +40,8 @@ func Error(ctx *fiber.Ctx, err error) error {
 		return ErrorR(ctx, 400, err.Error())
 	} else if errors.Is(err, exception.UserNotFound) {
 		return ErrorR(ctx, 404, err.Error())
+	} else if errors.Is(err, exception.PasswordWrong) {
+		return ErrorR(ctx, 400, err.Error())
 	}
 	return ErrorR(ctx, 500, "internal server error")
 }

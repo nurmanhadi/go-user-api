@@ -21,6 +21,7 @@ func (r *RouteConfig) Setup() {
 	auth := api.Group("/auth")
 	auth.Post("/register", r.AuthHandler.Register)
 	auth.Post("/login", r.AuthHandler.Login)
+	auth.Put("/", r.AuthMiddleware.Auth(), r.AuthHandler.ChangePassword)
 
 	// user
 	user := api.Group("/users", r.AuthMiddleware.Auth())
