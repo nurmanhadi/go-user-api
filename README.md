@@ -79,6 +79,7 @@ The API collection is available in Postman for testing and integration purposes 
 | PUT     | /api/v1/auth/password   | Change password     |
 | GET     | /api/v1/users/{id}      | Get user by ID      |
 | DELETE  | /api/v1/users/{id}      | Delete user         |
+| PUT     | /api/v1/users/          | Change name
 
 ### 1. Register a New User
 
@@ -175,7 +176,7 @@ The API collection is available in Postman for testing and integration purposes 
 
 ### 5. Delete User
 
-**Endpoint:** `DELETE /api/v1/users/{id}`
+**Endpoint:** `DELETE /api/v1/users/`
 
 **Headers:**
 - `Authorization: Bearer <JWT_TOKEN>`
@@ -184,7 +185,30 @@ The API collection is available in Postman for testing and integration purposes 
 ```json
 {
     "links": {
-        "self": "/api/v1/users/{id}"
+        "self": "/api/v1/users/"
+    }
+}
+```
+
+### 6. Change Name
+
+**Endpoint:** `PUT /api/v1/users/`
+
+**Headers:**
+- `Authorization: Bearer <JWT_TOKEN>`
+
+**Request Body:**
+```json
+{
+    "name": "yourname"
+}
+```
+
+**Response (200 Success):**
+```json
+{
+    "links": {
+        "self": "/api/v1/users/"
     }
 }
 ```

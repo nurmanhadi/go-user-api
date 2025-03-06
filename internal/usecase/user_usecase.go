@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"go-user-api/internal/entity"
+	"go-user-api/internal/model"
 	"go-user-api/internal/repository"
 	"go-user-api/pkg/exception"
 
@@ -12,6 +13,7 @@ import (
 type IUserUsecase interface {
 	FindById(id string) (*entity.User, error)
 	Delete(id string) error
+	ChangeName(id string, request *model.UserChangeNameRequest) error
 }
 type userUsecase struct {
 	userRepository repository.IUserRepository
@@ -43,6 +45,24 @@ func (u *userUsecase) Delete(id string) error {
 	err = u.userRepository.Delete(id)
 	if err != nil {
 		u.log.WithField("error", err).Warn("failed delete user from database")
+		return err
+	}
+	return nil
+}
+func (u *userUsecase) ChangeName(id string, request *model.UserChangeNameRequest) error {
+	err := u.validation.Struct(request)
+	if err != nil {
+		u.log.WithField("error", err).Warn("failed validation request")
+		return err
+	}
+	_, err = u.userRepository.FindById(id)
+	if err != nil {
+		u.log.WithField("error", err).Warn("user not found")
+		return exception.UserNotFound
+	}
+	err = u.userRepository.UpdateName(id, request.Name)
+	if err != nil {
+		u.log.WithField("error", err).Warn("failed update name user to database")
 		return err
 	}
 	return nil

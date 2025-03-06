@@ -16,6 +16,7 @@ type IUserRepository interface {
 	Delete(id string) error
 	FindByEmail(email string) (*entity.User, error)
 	UpdatePassword(id string, password string) error
+	UpdateName(id string, name string) error
 }
 type userRepository struct {
 	db  *sql.DB
@@ -113,6 +114,20 @@ func (r *userRepository) UpdatePassword(id string, password string) error {
 	_, err = stmt.ExecContext(r.ctx, &password, &id)
 	if err != nil {
 		r.log.WithError(err).Error("failed exec context update password user")
+		return err
+	}
+	return nil
+}
+func (r *userRepository) UpdateName(id string, name string) error {
+	stmt, err := r.db.PrepareContext(r.ctx, source.USER_UPDATE_NAME)
+	if err != nil {
+		r.log.WithError(err).Error("failed prepare context update name user")
+		return err
+	}
+	defer stmt.Close()
+	_, err = stmt.ExecContext(r.ctx, &name, &id)
+	if err != nil {
+		r.log.WithError(err).Error("failed exec context update name user")
 		return err
 	}
 	return nil

@@ -7,4 +7,5 @@ const (
 	USER_COUNT_BY_EMAIL  = "SELECT COUNT(*) FROM users WHERE email = ?"
 	USER_DELETE_BY_ID    = "DELETE FROM users WHERE id = ?"
 	USER_UPDATE_PASSWORD = "UPDATE users SET password = ? WHERE id = ?"
+	USER_UPDATE_NAME     = "UPDATE users SET name = ? WHERE id = ?"
 )
